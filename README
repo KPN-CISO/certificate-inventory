@@ -1,0 +1,90 @@
+##############################################
+# This file is part of certificate-inventory.
+#
+# certificate-inventory is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option) any
+# later version.
+#
+# certificate-inventory is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# certificate-inventory. If not, see <http://www.gnu.org/licenses/>.
+##############################################
+
+##############################################
+# Author: Oscar Koeroo <oscar.koeroo@kpn.com>
+# Office: CISO / Red Team - Ethical Hacker
+# Project: Certs-on-Fire
+# Date: September 14, 2013
+# Version: 0.5
+# License: GPLv3
+##############################################
+
+
+Description:
+Scans network blocks on a given TCP portnumber for certificates found on
+plain-SSL/TLS connections, e.g. HTTPS. The output is written in a CSV formatted
+file.
+
+
+Requirements for the tool:
+-   Run on a Linux/Unix based system (OSX will work too, Windows when all
+    requirements are met)
+-   Sipcalc, calculating ipblocks
+-   OpenSSL with the x509 and s_client subcommands (default),
+    tested on 0.9.8 and 1.0.1e
+-   Bash and tested on Dash (POSIX shells)
+
+
+Files:
+run.sh                   - Example script calling "certificate-inventory.sh"
+certificate-inventory.sh - Script to parse the user input, select an output
+                           file and enumerate the IP addresses in the provided
+                           netblocks. (Use this file or run.sh)
+download_certificate.sh  - Certificate download script handling 1 IP address
+                           Per certificate it will extract the following data:
+                           - Host
+                           - Port number
+                           - Certificate Subject
+                           - Certificate Issuer
+                           - Public Key size
+                           - Serial number
+                           - Valid from date
+                           - Valid until date
+                           - self-signed (yes/no)
+                           - Subject Alternative Names (DNS)
+
+Usage examples:
+./certificate-inventory.sh --output output.csv 192.168.0.0/24:443 10.0.0.0/18:443
+
+This will scan the two netblock 192.168.0.0/24 and 10.0.0.0/18 on port number
+443 (HTTPS), extract the data and push it to the output.csv file. 
+
+
+Other examples:
+./certificate-inventory.sh --output output.csv www.kpn.com:443
+./certificate-inventory.sh --output output.csv 192.168.0.11:443
+
+
+Release notes:
+Version 0.5:
+- Verified to work on Red Hat 5, 32 bit
+- Obsoleted the 'timeout' tool.
+- Fixed 'toolcheck' to a.) handle test for a tool as a parameter to be
+  installed. b.) the location of the check has move to where needed,
+  exclusively.
+
+Version 0.3:
+- Tested to work with netblocks on Solaris 5.8
+- Introduced the --skip-tool-check option to ignore sipcalc absence.
+
+Version 0.2:
+- Fixed individual host scanning. Only worked for netblocks.
+
+Version 0.1:
+- Initial version.
+- Tested on OSX 10.8, 10.6, Debian 6 and Debian 7.
